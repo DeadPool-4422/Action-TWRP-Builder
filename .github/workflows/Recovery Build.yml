@@ -150,14 +150,14 @@ jobs:
         export ALLOW_MISSING_DEPENDENCIES=true
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-      
+  
     - name: Find zip file
       id: findzip
       run: |
-        file_path=$(find /home/runner/work/Action-TWRP-Builder/Action-TWRP-Builder/workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ -type f -name "PBRP-${{ github.event.inputs.DEVICE_NAME }}-4.0-*-UNOFFICIAL.zip")
-        echo "::set-output name=file_path::$file_path"
+        file_path=$(find /home/runner/work/Action-TWRP-Builder/Action-TWRP-Builder/workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ -type f -name "*UNOFFICIAL.zip")
+        echo "file_path=$file_path" >> $GITHUB_ENV
 
-    - name: Upload to Release
+    - name: Upload recovery.img to Release
       uses: softprops/action-gh-release@v1
       with:
         files: workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
@@ -169,3 +169,17 @@ jobs:
           Target: ${{ github.event.inputs.BUILD_TARGET }}.img
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload zip to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ${{ env.file_path }}
+        name: ${{ github.event.inputs.DEVICE_NAME }}-${{ github.run_id }}
+        tag_name: ${{ github.run_id }}
+        body: |
+          Manifest: ${{ github.event.inputs.MANIFEST_BRANCH }}
+          Device: ${{ github.event.inputs.DEVICE_NAME }}
+          Zip: ${{ env.file_path }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
