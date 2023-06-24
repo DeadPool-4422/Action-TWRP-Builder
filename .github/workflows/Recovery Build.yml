@@ -150,6 +150,12 @@ jobs:
         export ALLOW_MISSING_DEPENDENCIES=true
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+      
+    - name: Find zip file
+      id: findzip
+      run: |
+        file_path=$(find /home/runner/work/Action-TWRP-Builder/Action-TWRP-Builder/workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ -type f -name "PBRP-${{ github.event.inputs.DEVICE_NAME }}-4.0-*-UNOFFICIAL.zip")
+        echo "::set-output name=file_path::$file_path"
 
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
