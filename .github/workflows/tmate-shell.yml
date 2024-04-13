@@ -24,10 +24,9 @@ jobs:
           mkdir ~/bin
           curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
           chmod a+x ~/bin/repo
-          curl https://github.com/timvisee/ffsend/releases/download/v0.2.76/ffsend-v0.2.76-linux-x64-static > ~/bin/ffsend
-          chmod a+x ~/bin/ffsend
           sudo ln -sf ~/bin/repo /usr/bin/repo
-          sudo ln -sf ~/bin/ffsend /usr/bin/ffsend
+          wget https://github.com/timvisee/ffsend/releases/download/v0.2.76/ffsend-v0.2.76-linux-x64-static -O '/usr/bin/ffsend'
+          sudo chmod a+x /usr/bin/ffsend
 
       - name: Start tmate session
         run: |
